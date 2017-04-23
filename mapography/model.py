@@ -77,6 +77,16 @@ class Module (object):
 
 
 class Symbol(object):
-    pass
+    def __init__(self, name, address):
+        self.name = str(name)
+        self._address = _parse_address(address)
+
+    @property
+    def address(self):
+        return self._address
+
+    @address.setter
+    def address(self, address):
+        self._address = _parse_address(address)
 
 
