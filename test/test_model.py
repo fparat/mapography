@@ -94,9 +94,35 @@ def test_modules():
     print()
 
 
+def test_call_tree():
+    #  a  -  b  -  c
+    #     |     +  d
+    #     +  e  -  f
+    #     +  g
+
+    a = model.CallTree("function_a")
+    b = model.CallTree("function_b")
+    c = model.CallTree("function_c")
+    d = model.CallTree("function_d")
+    e = model.CallTree("function_e")
+    f = model.CallTree("function_f")
+    g = model.CallTree("function_g")
+
+    b.add_node(c)
+    b.add_node(d)
+    e.add_node(f)
+    a.add_node(b)
+    a.add_node(e)
+    a.add_node(g)
+
+    print(a)
+
+
 def test_all():
     test_segment()
     test_modules()
+    test_call_tree()
+
 
 if __name__ == "__main__":
-    test_all()
+    test_call_tree()

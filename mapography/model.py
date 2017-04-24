@@ -109,19 +109,19 @@ class CallTree(object):
             raise ValueError("Not a CallTree")
             
     def __str__(self):
+        selftree_init = " - " + self.name
+
         if not self.calls:
-            return " - " + self.name
+            return selftree_init
 
-        subtree = ""
+        subtree = []
         for call in self.calls:
-            subtree += str(call) + "\n"
-        subtree = subtree.split('\n')
+            subtree.append(str(call))
 
-        selftree = " - " + self.name + subtree.pop(0) + "\n"
-        subtree = map(lambda s: (" " * (len(self.name) + len(" - "))) + s, subtree)
-        selftree += '\n'.join(subtree)
-
+        selftree = selftree_init + "\n".join(subtree)
+        selftree = selftree.replace("\n", "\n" + (" " * len(selftree_init)))
         return selftree
 
-
+    def __repr__(self):
+        return "CallTree({})".format(self.name)
 
