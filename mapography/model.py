@@ -89,4 +89,39 @@ class Symbol(object):
     def address(self, address):
         self._address = _parse_address(address)
 
+        
+class CallTree(object):
+    def __init__(self, name, calls=None):
+        self.name = str(name)
+        if calls is not None:
+            for call in calls:
+                if not isinstance(call, CallTree):
+                    raise ValueError("Not a CallTree")
+            else:
+                self.calls = list(calls)
+        else:
+            self.calls = []
+
+    def add_node(self, call_tree):
+        if isinstance(call_tree, CallTree):
+            self.calls.append(call_tree)
+        else:
+            raise ValueError("Not a CallTree")
+            
+    def __str__(self):
+        if not self.calls:
+            return " - " + self.name
+
+        subtree = ""
+        for call in self.calls:
+            subtree += str(call) + "\n"
+        subtree = subtree.split('\n')
+
+        selftree = " - " + self.name + subtree.pop(0) + "\n"
+        subtree = map(lambda s: (" " * (len(self.name) + len(" - "))) + s, subtree)
+        selftree += '\n'.join(subtree)
+
+        return selftree
+
+
 
