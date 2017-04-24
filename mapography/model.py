@@ -91,8 +91,9 @@ class Symbol(object):
 
         
 class CallTree(object):
-    def __init__(self, name, calls=None):
+    def __init__(self, name, calls=None, size=None):
         self.name = str(name)
+        self.size = size
         if calls is not None:
             for call in calls:
                 if not isinstance(call, CallTree):
@@ -109,7 +110,10 @@ class CallTree(object):
             raise ValueError("Not a CallTree")
             
     def __str__(self):
-        selftree_init = " - " + self.name
+        if self.size is None:
+            selftree_init = " - {}".format(self.name)
+        else:
+            selftree_init = " - {} ({})".format(self.name, self.size)
 
         if not self.calls:
             return selftree_init
