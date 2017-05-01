@@ -134,7 +134,7 @@ class CallTreeNode(object):
 class CallTree(object):
     def __init__(self):
         self.functions = dict()
-        self.roots = []
+        self.roots = set()
 
     def add_function(self, name, size, calls=None, pointer=False,
                      recursive=False):
@@ -146,10 +146,34 @@ class CallTree(object):
             recursive=bool(recursive))
 
     def connect(self, called_name, caller_name):
+        if called_name not in self.functions:
+            raise ValueError("Function must be declared using add_function")
+
         if caller_name is None:
-            self.roots.append(self.functions[called_name])
-        else:
+            self.roots.add(called_name)
+        elif caller_name in self.functions:
             self.functions[caller_name]['calls'].add(called_name)
+        else:
+            raise ValueError("Function must be declared using add_function")
+
+    def longest_path(self):
+        def inspect_node(name):
+            func = self.functions[name]
+            neighbors = []
+            for n in func['calls']:
+                print(n)
+                neighbors.append(inspect_node(n))
+            best_neighbor = max(neighbors, key=lambda n: n[1],
+                                default=([name], func['size']))
+            return best_neighbor[0].insert(0, name), \
+                   best_neighbor[1] + func['size']
+
+        calls = [inspect_node(root) for root in self.roots]
+        longest_path = max(calls, key=lambda n: n[1],
+                           default=(['No root function found'], 0))
+        return longest_path
+
+
 
     def __str__(self):
         s = "{}: {}, {}".format(
