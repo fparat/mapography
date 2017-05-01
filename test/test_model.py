@@ -80,20 +80,20 @@ def test_call_tree():
     #     +  e  -  f
     #     +  g
 
-    a = model.CallTree("function_a", size=10)
-    b = model.CallTree("function_b", size=20)
-    c = model.CallTree("function_c", size=30)
-    d = model.CallTree("function_d", size=40)
-    e = model.CallTree("function_e", size=50)
-    f = model.CallTree("function_f", size=60)
-    g = model.CallTree("function_g", size=70)
+    a = model.CallTreeNode("function_a", size=10)
+    b = model.CallTreeNode("function_b", size=20)
+    c = model.CallTreeNode("function_c", size=30)
+    d = model.CallTreeNode("function_d", size=40)
+    e = model.CallTreeNode("function_e", size=50)
+    f = model.CallTreeNode("function_f", size=60)
+    g = model.CallTreeNode("function_g", size=70)
 
-    b.add_node(c)
-    b.add_node(d)
-    e.add_node(f)
-    a.add_node(b)
-    a.add_node(e)
-    a.add_node(g)
+    b.add_call(c)
+    b.add_call(d)
+    e.add_call(f)
+    a.add_call(b)
+    a.add_call(e)
+    a.add_call(g)
 
     print(repr(a))
     print(str(a))
@@ -111,6 +111,11 @@ def test_cosmic_parser():
             if element is not None:
                 csvf.writerow(element)
     print("Call tree element sample:\n{}".format(call_tree_dicts[1]))
+    print()
+
+    call_tree = parser.cosmic.make_call_tree(call_tree_dicts)
+    print(call_tree)
+
     print()
 
 

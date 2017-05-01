@@ -91,21 +91,21 @@ class Symbol(object):
         self._address = _parse_address(address)
 
         
-class CallTree(object):
+class CallTreeNode(object):
     def __init__(self, name, calls=None, size=None):
         self.name = str(name)
         self.size = size
         if calls is not None:
             for call in calls:
-                if not isinstance(call, CallTree):
+                if not isinstance(call, CallTreeNode):
                     raise ValueError("Not a CallTree")
             else:
                 self.calls = list(calls)
         else:
             self.calls = []
 
-    def add_node(self, call_tree):
-        if isinstance(call_tree, CallTree):
+    def add_call(self, call_tree):
+        if isinstance(call_tree, CallTreeNode):
             self.calls.append(call_tree)
         else:
             raise ValueError("Not a CallTree")
@@ -130,3 +130,30 @@ class CallTree(object):
     def __repr__(self):
         return "CallTree({})".format(self.name)
 
+
+class CallTree(object):
+    def __init__(self):
+        self.functions = dict()
+        self.roots = []
+
+    def add_function(self, name, size, calls=None, pointer=False,
+                     recursive=False):
+        self.functions[name] = dict(
+            name=name,
+            size=int(size),
+            calls=set() if calls is None else set(calls),
+            pointer=bool(pointer),
+            recursive=bool(recursive))
+
+    def connect(self, called_name, caller_name):
+        if caller_name is None:
+            self.roots.append(self.functions[called_name])
+        else:
+            self.functions[caller_name]['calls'].add(called_name)
+
+    def __str__(self):
+        s = "{}: {}, {}".format(
+            self.__class__.__name__,
+            self.functions,
+            [r['name'] for r in self.roots])
+        return s

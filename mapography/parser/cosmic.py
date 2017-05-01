@@ -2,27 +2,11 @@
 
 import re
 
+from mapography.model import CallTree
+
 
 class ParserError(Exception):
     pass
-
-
-# class Function(object):
-#     def __init__(self, name, descrption_line):
-#         self.name = name
-#         self.description_line = int(descrption_line)
-#
-#
-# class CallTreeLine(object):
-#     def __init__(self, index, func_name, func_level):
-#         self.index = index
-#         self.func_level = func_level
-#
-#
-# class CallTreeLeaf(CallTreeLine):
-#     def __init__(self, index, func_name, func_level,size):
-#         super(CallTreeLine).__init__(self, index, func_name, func_level)
-#         self.size
 
 
 def extract_call_tree(maptext):
@@ -110,4 +94,22 @@ def parse_call_tree(call_tree_string):
 
 
 def make_call_tree(elements):
-    pass
+    call_tree = CallTree()
+
+    for element in elements:
+        if element is not None and element['size'] is not None:
+            call_tree.add_function(element['func_name'], element['size'])
+
+    call_stack = []
+    for element in elements:
+        if element is not None:
+            call_stack_delta = 1 + element['level'] - len(call_stack)
+            if element['level'] == 0:
+                call_stack = [element]
+                call_tree.connect(element['func_name'], None)
+            else:
+                call_tree.connect(element['func_name'], call_stack[-1]['func_name'])
+                for pop_num in range(call_stack_delta - 1):
+                    call_stack.pop()
+                call_stack.append(element)
+    return call_tree
