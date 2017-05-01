@@ -70,7 +70,8 @@ class Module (object):
         return sum([len(segment) for segment in self.segments])
 
     def __str__(self):
-        return "{}\n{}".format(self.name, '\n'.join([str(s) for s in self.segments]))
+        return "{}\n{}".format(
+            self.name, '\n'.join([str(s) for s in self.segments]))
 
     def __repr__(self):
         return "Module('{}', {})".format(self.name, repr(self.segments))

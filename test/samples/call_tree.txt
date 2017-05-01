@@ -1,0 +1,49 @@
+[Initial whatever]
+
+                              ---------
+                              Call tree
+                              ---------
+   1 > _Function_A0: (4)
+
+   2 > _Function_A1: (8)
+   3      + _Function_B0: (84)
+   4      |    + _Function_C0: (20)
+   5      |    + _Function_C1: (32)
+   6      |    |    + _Function_D0: (16)
+   7      |    |    + _Function_D1: (16)
+          |    |
+   8      |    + _Function_C2: (52)
+   9      |    + _Function_C3: (44)
+          |
+
+  10 > _Function_A2: (572)
+  11      + _Function_B1: (36)
+  12      |    + _Function_C4: (16)
+  13      |    + _Function_C5: (16)
+  14      |    |    + Function_D2: (76)
+  15      |    |    |    + Function_E0: (40)
+  16      |    |    |    |    + (Function_F0) ...
+  17      |    |    |    |    + (_Function_F1) ...
+          |    |    |    |
+  18      |    |    |    + (Function_F0) ...
+  19      |    |    |    + _Function_A0 --> 1
+  20      |    |    |    + Function_E2: (60)
+  21      |    |    |    |    + Function_F5: (4)
+          |    |    |    |
+          |    |    |
+          |    |
+          |
+  22      + Function_F0: (20)
+  23      |    + _Function_C6: (40)
+          |
+  24      + _Function_B2: (16)
+
+  25 > _Function_F1: (132)
+  26      + _Function_B1 --> 11
+  27      + Function_E2 --> 70
+  28      + _Function_B2 --> 24
+
+
+
+
+[Other stuff]

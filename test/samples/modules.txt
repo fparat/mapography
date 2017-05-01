@@ -1,0 +1,16 @@
+
+src\main.o:
+start 00000000 end 0000072d length  1837 section .debug
+start 00000000 end 0000009f length   159 section .info.
+start 40000000 end 40000014 length    20 section sdata (.sdata)
+start 00000008 end 00000022 length    26 section const (.sconst)
+start 00003ae8 end 000045d2 length  2794 section vtext (.vtext)
+start 4000a80c end 4000a81c length    16 section sbss (.sbss)
+
+src\app\process.o:
+start 0000172a end 000028a1 length  4471 section .debug
+start 000001f4 end 0000029a length   166 section .info.
+start 4000191c end 400029e4 length  4296 section sdata (.sdata)
+start 00006cc4 end 00007f22 length  4702 section vtext (.vtext)
+start 00000030 end 000000e0 length   176 section const (.sconst)
+

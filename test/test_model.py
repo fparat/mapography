@@ -2,48 +2,28 @@
 
 import re
 
-from mapography import model
+from mapography import model, parser
+import mapography.parser.cosmic
 
 
-_MAP_SEGMENTS = r"""
-start 00000000 end 00000008 length     8 segment rchw
-start 00000008 end 00003ae8 length 15072 segment const
-start 00003ae8 end 00021274 length 120716 segment vtext
-start 00060000 end 00061000 length  4096 segment vect
-start 40000000 end 4000a80c length 43020 segment sdata, initialized
-start 00021288 end 0002ba94 length 43020 segment sdata, from
-start 4000a80c end 4000a840 length    52 segment sbss
-start 00000000 end 0002048b length 132235 segment .debug
-start 00000000 end 00001ed3 length  7891 segment .info.
-start 00021274 end 00021288 length    20 segment .init
-"""
+with open("samples/segments.txt") as sf:
+    _MAP_SEGMENTS = sf.read()
 
-_MAP_MODULES = r"""
-src\main.o:
-start 00000000 end 0000072d length  1837 section .debug
-start 00000000 end 0000009f length   159 section .info.
-start 40000000 end 40000014 length    20 section sdata (.sdata)
-start 00000008 end 00000022 length    26 section const (.sconst)
-start 00003ae8 end 000045d2 length  2794 section vtext (.vtext)
-start 4000a80c end 4000a81c length    16 section sbss (.sbss)
+with open("samples/modules.txt") as sf:
+    _MAP_MODULES = sf.read()
 
-src\app\process.o:
-start 0000172a end 000028a1 length  4471 section .debug
-start 000001f4 end 0000029a length   166 section .info.
-start 4000191c end 400029e4 length  4296 section sdata (.sdata)
-start 00006cc4 end 00007f22 length  4702 section vtext (.vtext)
-start 00000030 end 000000e0 length   176 section const (.sconst)
-
-"""
+with open("samples/call_tree.txt") as sf:
+    _MAP_CALL_TREE = sf.read()
 
 
 def test_segment():
-    regex = r"start\s+(?P<start>[0-9a-fA-F]+)\s+end\s+(?P<end>[0-9a-fA-F]+)\s+" \
+    regex = r"start\s+(?P<start>[0-9a-fA-F]+)\s+end\s+(?P<end>[0-9a-fA-F]+)\s+"\
             r"length\s+(?P<length>\d+)\s+segment\s+(?P<name>.+)\n?"
 
     segments = []
     for m in re.finditer(regex, _MAP_SEGMENTS):
-        new_segment = model.Segment(m.group("name"), m.group("start"), m.group("end"))
+        new_segment = model.Segment(m.group("name"), m.group("start"),
+                                    m.group("end"))
         try:
             assert len(new_segment) == int(m.group("length"))
         except:
@@ -117,13 +97,29 @@ def test_call_tree():
 
     print(repr(a))
     print(str(a))
+    print()
+
+
+def test_cosmic_parser():
+    import csv
+    with open("out.txt", "w", newline='') as o:
+        call_tree_text = parser.cosmic.extract_call_tree(_MAP_CALL_TREE)
+        call_tree_dicts = parser.cosmic.parse_call_tree(call_tree_text)
+        csvf = csv.DictWriter(o, call_tree_dicts[1].keys())
+        csvf.writeheader()
+        for element in call_tree_dicts:
+            if element is not None:
+                csvf.writerow(element)
+    print("Call tree element sample:\n{}".format(call_tree_dicts[1]))
+    print()
 
 
 def test_all():
     test_segment()
     test_modules()
     test_call_tree()
+    test_cosmic_parser()
 
 
 if __name__ == "__main__":
-    test_call_tree()
+    test_all()

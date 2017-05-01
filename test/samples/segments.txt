@@ -1,0 +1,11 @@
+
+start 00000000 end 00000008 length     8 segment rchw
+start 00000008 end 00003ae8 length 15072 segment const
+start 00003ae8 end 00021274 length 120716 segment vtext
+start 00060000 end 00061000 length  4096 segment vect
+start 40000000 end 4000a80c length 43020 segment sdata, initialized
+start 00021288 end 0002ba94 length 43020 segment sdata, from
+start 4000a80c end 4000a840 length    52 segment sbss
+start 00000000 end 0002048b length 132235 segment .debug
+start 00000000 end 00001ed3 length  7891 segment .info.
+start 00021274 end 00021288 length    20 segment .init
