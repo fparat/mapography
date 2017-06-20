@@ -156,22 +156,33 @@ class CallTree(object):
         else:
             raise ValueError("Function must be declared using add_function")
 
-    def longest_path(self):
+    def call_paths(self):
+        """
+        Search all the possible function call paths
+        :return: list of path infos, a path info being a tuple
+        (list of function names, stack size)
+        """
+
         def inspect_node(name):
             func = self.functions[name]
             neighbors = []
-            for n in func['calls']:
-                print(n)
-                neighbors.append(inspect_node(n))
+            for call in func['calls']:
+                neighbors.append(inspect_node(call))
             best_neighbor = max(neighbors, key=lambda n: n[1],
-                                default=([name], func['size']))
-            return best_neighbor[0].insert(0, name), \
-                   best_neighbor[1] + func['size']
+                                default=([], func['size']))
+            best_neighbor[0].insert(0, name)
+            return best_neighbor[0], best_neighbor[1] + func['size']
 
-        calls = [inspect_node(root) for root in self.roots]
-        longest_path = max(calls, key=lambda n: n[1],
-                           default=(['No root function found'], 0))
-        return longest_path
+        call_paths = [inspect_node(root) for root in self.roots]
+        call_paths.sort(key=lambda p: p[0][0])  # sort alphabetically
+        call_paths.sort(key=lambda p: p[1], reverse=True)  # sort by size
+
+        return call_paths
+
+    def longest_path(self):
+        """ Return the longest call path (see call_paths) """
+        return max(self.call_paths(), key=lambda n: n[1],
+                   default=([], 0))
 
     def __str__(self):
         s = "{}: \n".format(self.__class__.__name__)
