@@ -108,8 +108,9 @@ def make_call_tree(elements):
                 call_stack = [element]
                 call_tree.connect(element['func_name'], None)
             else:
-                call_tree.connect(element['func_name'], call_stack[-1]['func_name'])
-                for pop_num in range(call_stack_delta - 1):
+                call_tree.connect(element['func_name'],
+                                  call_stack[call_stack_delta-2]['func_name'])
+                for pop_num in range(1 - call_stack_delta):
                     call_stack.pop()
                 call_stack.append(element)
     return call_tree

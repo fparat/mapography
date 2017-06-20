@@ -173,11 +173,11 @@ class CallTree(object):
                            default=(['No root function found'], 0))
         return longest_path
 
-
-
     def __str__(self):
-        s = "{}: {}, {}".format(
-            self.__class__.__name__,
-            self.functions,
-            [r['name'] for r in self.roots])
+        s = "{}: \n".format(self.__class__.__name__)
+        for func_name, func in self.functions.items():
+            s += "{} ({})\n".format(func['name'], func['size'])
+            for call in func['calls']:
+                s += "    " + call + '\n'
+        s += "----\nroots: " + ", ".join(self.roots) + "\n"
         return s
