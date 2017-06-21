@@ -160,20 +160,21 @@ class CallTree(object):
         """
         Search all the possible function call paths
         :return: list of path infos, a path info being a tuple
-        (list of function names, stack size)
+        (list of (function names, function size), stack size)
         """
-
-        def inspect_node(name):
-            func = self.functions[name]
+        call_paths = []
+        
+        def inspect_node(path):
+            func = self.functions[path[-1][0]]
             neighbors = []
-            for call in func['calls']:
-                neighbors.append(inspect_node(call))
-            best_neighbor = max(neighbors, key=lambda n: n[1],
-                                default=([], func['size']))
-            best_neighbor[0].insert(0, name)
-            return best_neighbor[0], best_neighbor[1] + func['size']
-
-        call_paths = [inspect_node(root) for root in self.roots]
+            if not func['calls']:
+                call_paths.append((path, sum(c[1] for c in path)))
+            else:
+                for call in func['calls']:
+                    inspect_node(path + [(call, self.functions[call]['size'])])
+        
+        for root in self.roots:
+            inspect_node([(root, self.functions[root]['size'])])
         call_paths.sort(key=lambda p: p[0][0])  # sort alphabetically
         call_paths.sort(key=lambda p: p[1], reverse=True)  # sort by size
 
