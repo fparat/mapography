@@ -1,0 +1,143 @@
+
+Map of DummyProject.ppc from link file DummyProject.lkf - Tue Jul 11 18:17:44 2017
+
+
+                               --------
+                               Segments
+                               --------
+
+start 00000000 end 00000000 length     0 segment rchw
+start 00000000 end 00000080 length   128 segment const
+start 00000080 end 00000278 length   504 segment vtext
+start 00060000 end 00060000 length     0 segment vect
+start 40000000 end 40000024 length    36 segment sdata, initialized
+start 0000028c end 000002b0 length    36 segment sdata, from
+start 40000024 end 40000028 length     4 segment sbss
+start 00000000 end 0000069d length  1693 segment .debug
+start 00000000 end 000002a1 length   673 segment .info.
+start 00000278 end 0000028c length    20 segment .init
+
+
+                               -------
+                               Modules
+                               -------
+
+src\main.o:
+start 00000000 end 000000e9 length   233 section .debug
+start 00000000 end 0000008e length   142 section .info.
+start 00000000 end 00000080 length   128 section const (.sconst)
+start 00000080 end 000000c2 length    66 section vtext (.vtext)
+
+src\app\module1.o:
+start 000000e9 end 00000222 length   313 section .debug
+start 0000008e end 0000011c length   142 section .info.
+start 000000c4 end 00000100 length    60 section vtext (.vtext)
+
+src\app\module2.o:
+start 00000222 end 00000415 length   499 section .debug
+start 0000011c end 000001aa length   142 section .info.
+start 40000000 end 40000004 length     4 section sdata (.sdata)
+start 00000100 end 00000168 length   104 section vtext (.vtext)
+
+src\drv\driver.o:
+start 00000415 end 0000069d length   648 section .debug
+start 000001aa end 00000237 length   141 section .info.
+start 40000004 end 40000024 length    32 section sdata (.sdata)
+start 00000168 end 000001fc length   148 section vtext (.vtext)
+start 40000024 end 40000028 length     4 section sbss (.sbss)
+
+C:\Program Files\COSMIC\CXPPC\Lib\crtsiv.ppc:
+start 00000237 end 0000026c length    53 section .info.
+start 000001fc end 00000276 length   122 section vtext (.vtext)
+
+
+                             -----------
+                             Stack usage
+                             -----------
+
+src\app\module1.o:
+_Module1_ProcessArray      16   (16)
+
+src\app\module2.o:
+_Module2_GetIndex           4   (4)
+_Module2_SendInfo          40   (12)
+_Module2_Translate         20   (12)
+
+src\drv\driver.o:
+_Device_Init                0   (0)
+_Device_Read                8   (8)
+_Device_Write              28   (28)
+
+src\main.o:
+_main                  >  172   (132)
+
+Stack size: 172
+
+
+                              ---------
+                              Call tree
+                              ---------
+   1 > _main: (132)
+   2      + _Device_Init: (0)
+   3      + _Module1_ProcessArray: (16)
+   4      + _Module2_GetIndex: (4)
+   5      + _Module2_SendInfo: (12)
+   6      |    + _Device_Write: (28)
+          | 
+   7      + _Module2_Translate: (12)
+   8      |    + _Device_Read: (8)
+          | 
+       
+   9   _Device_Init --> 2
+
+  10   _Device_Read --> 8
+
+  11   _Device_Write --> 6
+
+  12   _Module1_ProcessArray --> 3
+
+  13   _Module2_GetIndex --> 4
+
+  14   _Module2_SendInfo --> 5
+
+  15   _Module2_Translate --> 7
+
+
+
+                               -------
+                               Symbols
+                               -------
+
+_Device_Init            00000168   defined in src\drv\driver.o section vtext (.vtext)
+                                   used in src\main.o
+_Device_Read            00000182   defined in src\drv\driver.o section vtext (.vtext)
+                                   used in src\app\module2.o
+_Device_Write           000001c4   defined in src\drv\driver.o section vtext (.vtext)
+                                   used in src\app\module2.o
+_Module1_ProcessArray   000000c4   defined in src\app\module1.o section vtext (.vtext)
+                                   used in src\main.o
+_Module2_GetIndex       00000100   defined in src\app\module2.o section vtext (.vtext)
+                                   used in src\main.o
+_Module2_SendInfo       00000112   defined in src\app\module2.o section vtext (.vtext)
+                                   used in src\main.o
+_Module2_Translate      00000132   defined in src\app\module2.o section vtext (.vtext)
+                                   used in src\main.o
+__eram                  40008000   defined in command file
+                                   used in C:\Program Files\COSMIC\CXPPC\Lib\crtsiv.ppc
+__idesc__               00000278   defined in linker section .init
+                                   used in C:\Program Files\COSMIC\CXPPC\Lib\crtsiv.ppc
+__memory                40000028   defined in command file
+                                   *** not used ***
+__sbss                  40000024   defined in command file
+                                   *** not used ***
+__sdata                 40000000   defined in command file
+                                   used in C:\Program Files\COSMIC\CXPPC\Lib\crtsiv.ppc
+__sram                  40000000   defined in command file
+                                   used in C:\Program Files\COSMIC\CXPPC\Lib\crtsiv.ppc
+__stack                 40008000   defined in command file
+                                   used in C:\Program Files\COSMIC\CXPPC\Lib\crtsiv.ppc
+__stext                 00000210   defined in C:\Program Files\COSMIC\CXPPC\Lib\crtsiv.ppc section vtext (.vtext)
+                                   *** not used ***
+_exit                   00000274   defined in C:\Program Files\COSMIC\CXPPC\Lib\crtsiv.ppc section vtext (.vtext)
+_main                   00000080   defined in src\main.o section vtext (.vtext)
+                                   used in C:\Program Files\COSMIC\CXPPC\Lib\crtsiv.ppc
