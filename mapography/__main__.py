@@ -34,10 +34,6 @@ def make_argparser():
                                      .format(', '.join(COMMANDS[command])),
                                      metavar='subcommand')
 
-    # argparser.add_argument('command', choices=COMMANDS,
-    #                        help='Command to execute. Available commands are: '
-    #                             '{}'.format(', '.join(COMMANDS)),
-    #                        metavar='command')
     argparser.add_argument('-i', help='Input file', required=True,
                            metavar='input_file')
     argparser.add_argument('-o', help='Output file', metavar='output_file')
@@ -93,11 +89,11 @@ def execute(args):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        argparser = make_argparser()
-        args = argparser.parse_args(sys.argv[1:])
-        execute(args)
+    if len(sys.argv) <= 1:
+        args = make_argparser().print_help()
+        sys.exit()
     else:
-        test_argparse()
+        args = make_argparser().parse_args(sys.argv[1:])
 
-    sys.exit()
+    execute(args)
+
