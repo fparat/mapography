@@ -169,15 +169,15 @@ class CallTree(object):
             func = self.functions[path[-1][0]]
             neighbors = []
             if not func['calls']:
-                call_paths.append((path, sum(c[1] for c in path)))
+                call_paths.append((sum(c[1] for c in path), path))
             else:
                 for call in func['calls']:
                     inspect_node(path + [(call, self.functions[call]['size'])])
         
         for root in self.roots:
             inspect_node([(root, self.functions[root]['size'])])
-        call_paths.sort(key=lambda p: p[0][0])  # sort alphabetically
-        call_paths.sort(key=lambda p: p[1], reverse=True)  # sort by size
+        call_paths.sort(key=lambda p: p[1][0])  # sort alphabetically
+        call_paths.sort(key=lambda p: p[0], reverse=True)  # sort by size
 
         return call_paths
 
