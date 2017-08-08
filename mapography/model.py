@@ -138,12 +138,13 @@ class CallTree(object):
 
     def add_function(self, name, size, calls=None, pointer=False,
                      recursive=False):
-        self.functions[name] = dict(
-            name=name,
-            size=int(size),
-            calls=set() if calls is None else set(calls),
-            pointer=bool(pointer),
-            recursive=bool(recursive))
+        self.functions[name] = {
+            'name': name,
+            'size': int(size),
+            'calls': set() if calls is None else set(calls),
+            'pointer': bool(pointer),
+            'recursive': bool(recursive)
+        }
 
     def connect(self, called_name, caller_name):
         if called_name not in self.functions:
@@ -184,6 +185,18 @@ class CallTree(object):
         """ Return the longest call path (see call_paths) """
         return max(self.call_paths(), key=lambda n: n[1],
                    default=([], 0))
+
+    def draw_call_tree(self):
+        """ Returns formatted string representing the call tree """
+        # easy way maybe not efficient but good enough for now: use CallTreeNode
+        nodes = {func['name']: CallTreeNode(func['name'], size=func['size'])
+                 for func in self.functions.values()}
+
+        for name, node in nodes.items():
+            for called in self.functions[name]['calls']:
+                node.add_call(nodes[called])
+
+        return '\n'.join([str(nodes[root]) for root in sorted(self.roots)])
 
     def __str__(self):
         s = "{}: \n".format(self.__class__.__name__)

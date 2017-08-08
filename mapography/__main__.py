@@ -73,7 +73,7 @@ def execute(args):
                 mapparser.extract_call_tree(maptext)))
 
         if args.subcommand == 'tree':
-            result = str(call_tree)
+            result = str(call_tree.draw_call_tree())
         elif args.subcommand == 'paths':
             result = '\n'.join([str(path) for path in call_tree.call_paths()])
         elif args.subcommand == 'longest':
