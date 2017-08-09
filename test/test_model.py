@@ -6,13 +6,13 @@ from mapography import model, parser
 import mapography.parser.cosmic
 
 
-with open("samples/segments.txt") as sf:
+with open("samples/cosmic/segments.txt") as sf:
     _MAP_SEGMENTS = sf.read()
 
-with open("samples/modules.txt") as sf:
+with open("samples/cosmic/modules.txt") as sf:
     _MAP_MODULES = sf.read()
 
-with open("samples/call_tree.txt") as sf:
+with open("samples/cosmic/call_tree.txt") as sf:
     _MAP_CALL_TREE = sf.read()
 
 

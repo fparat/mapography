@@ -21,6 +21,13 @@ COMMANDS = {
 
 def make_argparser():
     argparser = argparse.ArgumentParser(prog='mapography')
+
+    argparser.add_argument(
+        'p',
+        choices=PARSERS.keys(),
+        help='Available parsers: {}'.format(', '.join(PARSERS.keys())),
+        metavar='parser')
+
     subargparsers = argparser.add_subparsers(
         dest='command',
         help='Available commands: {}'.format(', '.join(COMMANDS.keys())),
@@ -28,17 +35,15 @@ def make_argparser():
 
     for command in COMMANDS.keys():
         argparser_calls = subargparsers.add_parser(command)
-        argparser_calls.add_argument('subcommand', choices=COMMANDS[command],
-                                     help='Command to execute. Available '
-                                          'subcommands are: {}'
-                                     .format(', '.join(COMMANDS[command])),
-                                     metavar='subcommand')
+        argparser_calls.add_argument(
+            'subcommand',
+            choices=COMMANDS[command],
+            help='Command to execute. Available subcommands are: {}'
+            .format(', '.join(COMMANDS[command])),
+            metavar='subcommand')
 
-    argparser.add_argument('-i', help='Input file', required=True,
-                           metavar='input_file')
+    argparser.add_argument('i', help='Input file', metavar='input_file')
     argparser.add_argument('-o', help='Output file', metavar='output_file')
-    argparser.add_argument('-p', required=True, help='Parser choice: {}'
-                           .format(', '.join(PARSERS.keys())), metavar='parser')
 
     return argparser
 
@@ -46,8 +51,8 @@ def make_argparser():
 def test_argparse():
     argtests = [
         # 'mapography -h'.split(),
-        'mapography -p cosmic -i test/samples/cosmic/cosmic.map -o out.txt calls paths'.split(),
-        'mapography -p cosmic -i test/samples/cosmic/cosmic.map calls longest'.split()
+        'mapography -o out.txt cosmic calls paths test/samples/cosmic/cosmic.map'.split(),
+        'mapography cosmic calls longest test/samples/cosmic/cosmic.map'.split()
     ]
 
     argparser = make_argparser()
