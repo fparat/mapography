@@ -114,3 +114,61 @@ def make_call_tree(elements):
                     call_stack.pop()
                 call_stack.append(element)
     return call_tree
+
+
+def extract_symbols(maptext):
+    """
+    Extract the symbols section from map file content
+    :param maptext: map file content string
+    :return: symbol section of the map file as string
+    """
+    symbols_header = """                               -------
+                               Symbols
+                               -------
+"""
+
+    start = maptext.find(symbols_header)
+    if start < 0:
+        raise ParserError("Cannot find 'Symbols' section")
+
+    return maptext[start + len(symbols_header):]
+
+
+
+SYMBOL_REGEX = re.compile(r"""    (?P<name>\w+)
+    \s+
+    (?P<address>[0-9a-fA-F]+)
+    \s+
+    defined\ in\ 
+    (?P<module_defined>.+?)
+    \s*
+    (?:section\ 
+        (?P<section>.+?)(?:\ \((?P<section2>.+?)\).*?(?P<init>initialized)?)?
+    )?
+    \n\s*
+    (?:
+        (?:used\ in\ (?P<module_used>.+(?:\n\s+.+)*\n)+?)
+        |
+        (?:(?P<not_used>\*\*\*\ not\ used\ \*\*\*)\n)
+    )?""", flags=re.VERBOSE)
+
+
+def parse_symbols(symbols_string):
+    """
+    Parse the symbols section and returns a list of dictionaries of the elements
+    :param symbols_string: symbols as printed in the map file
+    :return:
+    """
+
+    symbols_dicts = []
+
+    # For each match, get and normalize its dict, and store in list
+    for match in re.finditer(SYMBOL_REGEX, symbols_string):
+        element = match.groupdict()
+        # TODO: finish
+        print(element)
+        symbols_dicts.append(element)
+
+    return symbols_dicts
+
+
