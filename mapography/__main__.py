@@ -73,9 +73,7 @@ def execute(args):
         maptext = i.read()
 
     if args.command == 'calls':
-        call_tree = mapparser.make_call_tree(
-            mapparser.parse_call_tree(
-                mapparser.extract_call_tree(maptext)))
+        call_tree = mapparser.get_call_tree(maptext)
 
         if args.subcommand == 'tree':
             result = str(call_tree.draw_call_tree())

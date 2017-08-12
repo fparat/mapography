@@ -2,11 +2,85 @@
 
 import re
 
-from mapography.model import CallTree
+from mapography.model import CallTree, Segment
 
 
 class ParserError(Exception):
     pass
+
+
+def extract_segments(maptext):
+    """
+    Extract the segments extract from map file content
+    :param maptext: map file content string
+    :return: segments extract string
+    """
+    segments_header = """                               --------
+                               Segments
+                               --------
+"""
+
+    start = maptext.find(segments_header)
+    if start < 0:
+        raise ParserError("Cannot find segments")
+
+    end = maptext.find("\n\n\n", start)
+    if end < 0:
+        raise ParserError("Cannot find segments")
+
+    return maptext[start + len(segments_header):end + 1]
+
+
+def parse_segments(segments_string, strict=True):
+    """
+    Parse the segments and returns a list of dictionaries of the elements
+    :param segments_string: segments as printed in the map file
+    :param strict: if True the function raises a ParseError exception when
+    incoherent data is found
+    :return: list of dictionaries for each element with the following keys:
+        - name: of the segment
+        - start: address of the segment as integer
+        - end: address of the segment as integer
+        - length: of the segment
+    """
+    # dict(name, start, end, length)
+
+    segments_dicts = []
+
+    for line in segments_string.split('\n'):
+        if line.strip():
+            items = line.split()
+            items_d = {items[2*n]: items[2*n+1] for n in range(len(items)//2)}
+
+            seg = {
+                'name': items_d['segment'],
+                'start': int(items_d['start'], 16),
+                'end': int(items_d['end'], 16),
+                'length': int(items_d['length']),
+            }
+
+            if strict and seg['length'] != seg['end'] - seg['start']:
+                raise ParserError("Segment '{}': length given doesn't match "
+                                  "with start and end".format(seg['name']))
+
+            segments_dicts.append(seg)
+
+    return segments_dicts
+
+
+def make_segments(segments_dict):
+    return [Segment(seg_dict['name'], seg_dict['start'], seg_dict['end'])
+            for seg_dict in segments_dict]
+
+
+def get_segments(maptext):
+    """
+    Map file content string -> list of Segment objects
+    Shortcut for make_segments(parse_segments(extract_segments(maptext)))
+    :param maptext:  map file content string
+    :return: list of Segment objects
+    """
+    return make_segments(parse_segments(extract_segments(maptext)))
 
 
 def extract_call_tree(maptext):
@@ -114,6 +188,16 @@ def make_call_tree(elements):
                     call_stack.pop()
                 call_stack.append(element)
     return call_tree
+
+
+def get_call_tree(maptext):
+    """
+    Map file content string -> CallTree object
+    Shortcut for make_call_tree(parse_call_tree(extract_call_tree(maptext)))
+    :param maptext:  map file content string
+    :return: CallTree object
+    """
+    return make_call_tree(parse_call_tree(extract_call_tree(maptext)))
 
 
 def extract_symbols(maptext):
