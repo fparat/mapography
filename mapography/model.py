@@ -67,7 +67,7 @@ class Module (object):
         self.segments.append(segment)
 
     def __len__(self):
-        return sum([len(segment) for segment in self.segments])
+        return sum(len(segment) for segment in self.segments)
 
     def __str__(self):
         return "{}\n{}".format(
@@ -183,8 +183,10 @@ class CallTree(object):
 
     def longest_path(self):
         """ Return the longest call path (see call_paths) """
-        return max(self.call_paths(), key=lambda n: n[1],
-                   default=([], 0))
+        try:
+            return max(self.call_paths(), key=lambda n: n[1])
+        except ValueError:
+            return 0, []
 
     def draw_call_tree(self):
         """ Returns formatted string representing the call tree """

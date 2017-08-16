@@ -269,7 +269,6 @@ def extract_symbols(maptext):
     return maptext[start + len(symbols_header):]
 
 
-
 SYMBOL_REGEX = re.compile(r"""    (?P<name>\w+)
     \s+
     (?P<address>[0-9a-fA-F]+)

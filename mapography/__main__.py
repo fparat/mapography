@@ -3,7 +3,7 @@
 import sys
 import argparse
 
-from mapography import parser, model
+from mapography import parser
 
 __author__ = "Franck PARAT"
 
@@ -16,7 +16,7 @@ VIEWERS = {}
 
 COMMANDS = {
     'calls': ['tree', 'paths', 'longest'],  # function calls
-    'modules': ['list']
+    'modules': ['list', 'sizes']
 }
 
 
@@ -53,7 +53,9 @@ def test_argparse():
     argtests = [
         # 'mapography -h'.split(),
         'mapography -o out.txt cosmic calls paths test/samples/cosmic/cosmic.map'.split(),
-        'mapography cosmic calls longest test/samples/cosmic/cosmic.map'.split()
+        'mapography cosmic calls longest test/samples/cosmic/cosmic.map'.split(),
+        'mapography cosmic modules list test\samples\cosmic\cosmic.map'.split(),
+        'mapography  cosmic modules sizes test\samples\cosmic\cosmic.map'.split()
     ]
 
     argparser = make_argparser()
@@ -90,6 +92,12 @@ def execute(args):
 
         if args.subcommand == 'list':
             result = '\n\n'.join(str(m) for m in modules)
+        elif args.subcommand == 'sizes':
+            result = '\n'.join('{} ({})'.format(m.name, len(m))
+                               for m in sorted(modules, key=len, reverse=True))
+
+    else:
+        raise ValueError('Invalid command: ' + args.command)
 
     if args.o is not None:
         with open(args.o, 'w') as o:
