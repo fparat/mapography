@@ -15,7 +15,8 @@ PARSERS = {
 VIEWERS = {}
 
 COMMANDS = {
-    'calls': ['tree', 'paths', 'longest']  # function calls
+    'calls': ['tree', 'paths', 'longest'],  # function calls
+    'modules': ['list']
 }
 
 
@@ -84,11 +85,17 @@ def execute(args):
         else:
             raise ValueError('Invalid subcommand: {}'.format(args.subcommand))
 
-        if args.o is not None:
-            with open(args.o, 'w') as o:
-                o.write(result)
-        else:
-            print(result)
+    elif args.command == 'modules':
+        modules = mapparser.get_modules(maptext)
+
+        if args.subcommand == 'list':
+            result = '\n\n'.join(str(m) for m in modules)
+
+    if args.o is not None:
+        with open(args.o, 'w') as o:
+            o.write(result)
+    else:
+        print(result)
 
 
 if __name__ == '__main__':

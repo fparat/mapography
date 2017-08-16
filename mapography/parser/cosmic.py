@@ -2,7 +2,7 @@
 
 import re
 
-from mapography.model import CallTree, Segment
+from mapography.model import CallTree, Segment, Module
 
 
 class ParserError(Exception):
@@ -81,6 +81,57 @@ def get_segments(maptext):
     :return: list of Segment objects
     """
     return make_segments(parse_segments(extract_segments(maptext)))
+
+
+def extract_modules(maptext):
+    """
+    Extract the modules from map file content
+    :param maptext: map file content string
+    :return: modules extract string
+    """
+    header = """-------
+                               Modules
+                               -------
+"""
+    start = maptext.find(header)
+    if start < 0:
+        raise ParserError("Cannot find modules")
+
+    end = maptext.find("\n\n\n", start)
+    if end < 0:
+        raise ParserError("Cannot find modules")
+
+    return maptext[start+len(header):end+1]
+
+
+def parse_modules(modules_string):
+    blocs = [[line.strip() for line in bloc.splitlines() if line.strip()]
+             for bloc in modules_string.split('\n\n')]
+
+    modules = []
+    for bloc in blocs:
+        module = {'name': bloc[0][:bloc[0].rfind(':')], 'sections': []}
+        for line in bloc[1:]:
+            items = line.split()
+            items_d = {items[2*n]: items[2*n+1] for n in range(len(items)//2)}
+            module['sections'].append(items_d)
+        modules.append(module)
+
+    return modules
+
+
+def make_modules(modules_dicts):
+    modules = []
+    for module_dict in modules_dicts:
+        segments = [Segment(s['section'], s['start'], s['end'])
+                    for s in module_dict['sections']]
+        modules.append(Module(module_dict['name'], segments))
+
+    return modules
+
+
+def get_modules(maptext):
+    return make_modules(parse_modules(extract_modules(maptext)))
 
 
 def extract_call_tree(maptext):
