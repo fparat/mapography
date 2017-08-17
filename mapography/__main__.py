@@ -2,6 +2,7 @@
 
 import sys
 import argparse
+from pprint import pprint, pformat
 
 from mapography import parser
 
@@ -92,9 +93,35 @@ def execute(args):
 
         if args.subcommand == 'list':
             result = '\n\n'.join(str(m) for m in modules)
+            
         elif args.subcommand == 'sizes':
-            result = '\n'.join('{} ({})'.format(m.name, len(m))
-                               for m in sorted(modules, key=len, reverse=True))
+            # Find section names
+            secnames = set(seg.name for m in modules for seg in m.segments)
+            
+            # Find and regroup the modules by section type, sorted
+            sizes = []
+            for secname in secnames:
+                section = {'name': secname, 'modules': []}
+                for m in modules:
+                    for seg in m.segments:
+                        if seg.name == secname:
+                            section['modules'].append((m.name, len(seg)))
+                            break
+                section['modules'].sort(key=lambda m: m[1], reverse=True)
+                sizes.append(section)
+            # the complicated lambda is for putting names starting with '.' at the end
+            sizes.sort(key=lambda s: ['1','0'][s['name'][0].isalpha()] + s['name'])
+            
+            
+            # Formatting
+            results = []
+            for section in sizes:
+                module_list = '\n'.join(['{} ({})'.format(*m) 
+                                         for m in section['modules']])
+                bloc = '{}:\n{}'.format(section['name'], module_list)
+                results.append(bloc)
+            result = '\n\n'.join(results)
+            # result = pformat(sizes, width=120)
 
     else:
         raise ValueError('Invalid command: ' + args.command)
